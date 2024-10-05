@@ -1,0 +1,7 @@
+[console_scripts]
+add = todo:add
+delete = todo:delete
+list-tasks = todo:list_tasks
+mark-done = todo:mark_done
+mark-in-progress = todo:mark_in_progress
+update = todo:update
