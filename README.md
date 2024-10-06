@@ -9,10 +9,12 @@ This is simple CLI that allows to store data in json file. The user is able to:
 -List all tasks that are not done
 -List all tasks that are in progress
 
-This CLI uses Click to fasten the process. 
+There are two versions of this programm: first, on main uses Click, and second version on another branch uses Argparse, which is a built-in module.  
 
 Commands that are availiabe:
 -add (Ads task) its argument is task;
 -update - arguments are id of the task and description that is updated
 -delete 
 -list - show all tasks. You can use keys(--done, --in-progress, --todo) to show tasks with specific status.
+
+If json file is not created none of those commands will work. First you have to use command add to start using this CLI.
