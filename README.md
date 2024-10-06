@@ -18,3 +18,4 @@ Commands that are availiabe:
 -list - show all tasks. You can use keys(--done, --in-progress, --todo) to show tasks with specific status.
 
 If json file is not created none of those commands will work. First you have to use command add to start using this CLI.
+Project URL: https://roadmap.sh/projects/task-tracker. 
