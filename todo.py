@@ -58,121 +58,139 @@ def check_if_task_in_todolist(task, data):
 @click.argument("task_id")
 @click.argument("description")
 def update(task_id, description):
-    with open(json_file, "r") as task_file:
-        task_file.seek(0)
-        data_read = task_file.read().strip()
-        if len(data_read) != 0:
-            data = json.loads(data_read)
-        else:
-            click.echo("There is nothing to update")
-            return
+    try:
+        with open(json_file, "r+") as task_file:
+            task_file.seek(0)
+            data_read = task_file.read().strip()
+            if len(data_read) != 0:
+                data = json.loads(data_read)
+            else:
+                click.echo("There is nothing to update")
+                return
+            if task_id not in data:
+                click.echo("There is no such task")
+                return
 
-        data[task_id]["description"] = description
-        data[task_id]["updated_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            data[task_id]["description"] = description
+            data[task_id]["updated_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-
-    with open(json_file, "w+") as task_file:
-        json.dump(data, task_file)
-
-    click.echo(f"You have updated {task_id}. Its description now is {data[task_id]['description']}")
-
-
-@click.command("delete")
-@click.argument("task_id")
-def delete(task_id):
-    with open(json_file, "r") as task_file:
-        data_read = task_file.read().strip()
-
-        if len(data_read) == 0:
-            click.echo("There is nothing to delete")
-            return
-
-        data = json.loads(data_read)
-
-        data.pop(task_id)
 
         with open(json_file, "w+") as task_file:
             json.dump(data, task_file)
 
-        click.echo(f"You have deleted {task_id}")
+        click.echo(f"You have updated {task_id}. Its description now is {data[task_id]['description']}")
+    except FileNotFoundError:
+        raise FileNotFoundError("There is nothing to delete. Please use add command to begin using this program") from None
 
+@click.command("delete")
+@click.argument("task_id")
+def delete(task_id):
+    try:
+        with open(json_file, "r+") as task_file:
+            data_read = task_file.read().strip()
+
+            if len(data_read) == 0:
+                click.echo("There is nothing to delete")
+                return
+
+            data = json.loads(data_read)
+
+            if task_id not in data:
+                click.echo("There is no such task")
+                return
+
+            data.pop(task_id)
+
+            with open(json_file, "w+") as task_file:
+                json.dump(data, task_file)
+
+            click.echo(f"You have deleted {task_id}")
+    except FileNotFoundError:
+        raise FileNotFoundError("There is nothing to delete. Please use add command to begin using this program") from None
 
 @click.command("mark-in-progress")
 @click.argument("task_id")
 def mark_in_progress(task_id):
-    with open(json_file, "r") as task_file:
+    try:
+        with open(json_file, "r+") as task_file:
 
-        data_read = task_file.read().strip()
-        if len(data_read) != 0:
-            data = json.loads(data_read)
-        else:
-            click.echo("There is nothing to mark in progress")
-            return
+            data_read = task_file.read().strip()
+            if len(data_read) != 0:
+                data = json.loads(data_read)
+            else:
+                click.echo("There is nothing to mark in progress")
+                return
 
-        data[task_id]["status"] = "In Progress"
-        data[task_id]["updated_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if task_id not in data:
+                click.echo("There is no such task")
+                return
 
-    with open(json_file, "w+") as task_file:
-        json.dump(data, task_file)
+            data[task_id]["status"] = "In Progress"
+            data[task_id]["updated_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    click.echo(f"You have marked {task_id} as In progress")
+        with open(json_file, "w+") as task_file:
+            json.dump(data, task_file)
 
+        click.echo(f"You have marked {task_id} as In progress")
+    except FileNotFoundError:
+        raise FileNotFoundError("There is nothing to delete. Please use add command to begin using this program") from None
 
 @click.command("mark-done")
 @click.argument("task_id")
 def mark_done(task_id):
-    with open(json_file, "r") as task_file:
-        data_read = task_file.read().strip()
+    try:
+        with open(json_file, "r+") as task_file:
+            data_read = task_file.read().strip()
 
-        if len(data_read) == 0:
-            click.echo("There is nothing to mark in done")
-            return
+            if len(data_read) == 0:
+                click.echo("There is nothing to mark in done")
+                return
 
-        data = json.loads(data_read)
+            data = json.loads(data_read)
 
-        data[task_id]["status"] = "Done"
-        data[task_id]["updated_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if task_id not in data:
+                click.echo("There is no such task")
+                return
 
-    with open(json_file, "w+") as task_file:
-        json.dump(data, task_file)
+            data[task_id]["status"] = "Done"
+            data[task_id]["updated_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    click.echo(f"You have marked {task_id} as Done")
+        with open(json_file, "w+") as task_file:
+            json.dump(data, task_file)
 
+        click.echo(f"You have marked {task_id} as Done")
+    except FileNotFoundError:
+        raise FileNotFoundError("There is nothing to delete. Please use add command to begin using this program") from None
 
 @click.command("list-tasks")
 @click.option("--todo", "status", flag_value = "Todo")
 @click.option("--in-progress", "status", flag_value = "In Progress")
 @click.option("--done", "status", flag_value = "Done")
 def list_tasks(status):
+    try:
+        with open(json_file, "r+") as task_file:
+            data_read = task_file.read().strip()
+            if len(data_read) == 0:
+                click.echo("There list is empty")
+                return
 
-    with open(json_file, "r") as task_file:
-        data_read = task_file.read().strip()
-        if len(data_read) == 0:
-            click.echo("There list is empty")
-            return
 
+            data = json.loads(data_read)
 
-        data = json.loads(data_read)
-
-        for key,value in data.items():
-            if status == None:
-                click.echo(f"Key of task: {key} \n"
-                           f"Name of task: {data[key]['description']} \n"
-                           f"Status: {data[key]['status']} \n"
-                           f"Started time: {data[key]['started_time']} \n"
-                           f"Last updated time: {data[key]['updated_time']} \n"
-                           )
-            elif data[key]["status"] == status:
-                click.echo(f"Printing tasks with status {data[key]['status']}\n"
-                           f"\n"
-                           f"Key of task: {key}\n"
-                           f"Name of task: {data[key]['description']} \n"
-                           f"Started time: {data[key]['started_time']} \n"
-                           f"Last updated time: {data[key]['updated_time']} \n")
-
-    # cli.add_command(add)
-    # cli.add_command(delete)
-    # cli.add_command(update)
-    # cli.add_command(mark_in_progress)
-    # cli.add_command(mark_done)
-    # cli.add_command(list_tasks)
+            for key,value in data.items():
+                if status == None:
+                    click.echo(f"Key of task: {key} \n"
+                               f"Name of task: {data[key]['description']} \n"
+                               f"Status: {data[key]['status']} \n"
+                               f"Started time: {data[key]['started_time']} \n"
+                               f"Last updated time: {data[key]['updated_time']} \n"
+                               )
+                elif data[key]["status"] == status:
+                    click.echo(f"Printing tasks with status {data[key]['status']}\n"
+                               f"\n"
+                               f"Key of task: {key}\n"
+                               f"Name of task: {data[key]['description']} \n"
+                               f"Started time: {data[key]['started_time']} \n"
+                               f"Last updated time: {data[key]['updated_time']} \n")
+    except FileNotFoundError:
+        raise FileNotFoundError("There is nothing to delete. Please use add command to begin using this program") from None
