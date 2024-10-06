@@ -1,5 +1,7 @@
 # CLI_To_Do_List
 
+Please check second branch.
+
 This is simple CLI that allows to store data in json file. The user is able to:
 
 -Add, Update, and Delete tasks 
@@ -16,3 +18,5 @@ Commands that are availiabe:
 -update - arguments are id of the task and description that is updated
 -delete 
 -list - show all tasks. You can use keys(--done, --in-progress, --todo) to show tasks with specific status.
+
+Project URL: https://roadmap.sh/projects/task-tracker
